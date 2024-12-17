@@ -45,7 +45,7 @@ public class CartController {
             Cart cart = cartService.getCartByUserId(user.getId());
             cartService.clearCart(cart.getId());
             return ResponseEntity.ok(new ApiResponse("Clear Cart Success", null));
-        } catch (ResourceNotFoundException e){
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse(e.getMessage(), null));
         }

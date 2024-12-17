@@ -13,7 +13,7 @@ export function logout(){
     try {
         localStorage.removeItem('token');
         return true;
-    } catch (error) {
+    } catch (err) {
         throw err;
     }
 }

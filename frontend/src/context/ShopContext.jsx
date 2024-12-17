@@ -2,6 +2,7 @@ import { createContext, useState, useEffect } from "react";
 import { listProducts } from "../services/ProductService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { getCart } from "../services/CartService";
 
 export const ShopContext = createContext();
 
@@ -11,29 +12,29 @@ const ShopContextProvider = (props) => {
   const [products, setProducts] = useState([]); // State để lưu danh sách sản phẩm
   const [search, setSearch] = useState('')
   const [showSearch, setShowSearch] = useState(false)
-  const [cartItems, setCartItems] = useState({});
+  const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
 
-  const addToCart = async (itemId,size)=>{
-    if(!size){
-      toast.error('Select Product Size');
-      return;
+  const fetchCartData = async () => {
+    try {
+      const cart = await getCart();
+      setCartItems(cart.data);
+      console.log('Cart Data:', cart.data);
+    } catch (error) {
+      console.error("Error fetching cart:", error);
     }
-    let cartData = structuredClone(cartItems);
-    if(cartData[itemId]){
-        if(cartData[itemId][size]){
-          cartData[itemId][size] += 1;
-        }
-        else{
-          cartData[itemId][size] = 1;
-        }
+  };
+
+  const getCartItemNumber = () => {
+    let total = 0;
+    if (cartItems && cartItems.items) {
+      for (const item of cartItems.items) {
+        total += item.quantity;
+      }
     }
-    else {
-      cartData[itemId] = {};
-      cartData[itemId][size] = 1;
-    }
-    setCartItems(cartData);
-  }
+    return total;
+  };
+  
 
   useEffect(() => {
     listProducts()
@@ -43,47 +44,9 @@ const ShopContextProvider = (props) => {
       .catch(error => {
         console.error("Lỗi khi lấy danh sách sản phẩm:", error);
       });
+    fetchCartData();
   }, []); // Chỉ chạy một lần khi component được render
   
-  const getCartCount = () => {
-      let totalCount = 0;
-      for(const items in cartItems){
-        for(const item in cartItems[items]){
-          try {
-            if (cartItems[items][item] > 0) {
-              totalCount += cartItems[items][item];
-            }
-          } catch (error) {
-            
-          }
-        }
-      }
-      return totalCount;
-    }
-
-  const updateQuantity = async (itemId, size, quantity) => {
-      let cartData = structuredClone(cartItems);
-      cartData[itemId][size] = quantity;
-
-      setCartItems(cartData);
-  }
-
-  const getCartAmount = () => {
-    let totalAmount = 0;
-    for(const items in cartItems){
-      let itemInfo = products.find((product)=>product.id === Number(items));
-      for(const item in cartItems[items]){
-        try {
-          if (cartItems[items][item] > 0) {
-            totalAmount += itemInfo.price*cartItems[items][item];
-          }
-        } catch (error) {
-          
-        }
-      }
-    }
-    return totalAmount;
-  }
 
   const value = {
     products, // Giá trị state sẽ tự động cập nhật khi có dữ liệu
@@ -91,9 +54,8 @@ const ShopContextProvider = (props) => {
     delivery_fee,
     search, setSearch,
     showSearch, setShowSearch,
-    cartItems, addToCart,
-    getCartCount, updateQuantity,
-    getCartAmount, navigate
+    cartItems, navigate,
+    getCartItemNumber
   };
 
   

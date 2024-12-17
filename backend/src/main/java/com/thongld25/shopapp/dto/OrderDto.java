@@ -10,6 +10,9 @@ import java.util.List;
 public class OrderDto {
     private Long id;
     private Long userId;
+    private String receiverName;
+    private String receiverPhone;
+    private String address;
     private LocalDateTime orderDate;
     private BigDecimal totalAmount;
     private String status;

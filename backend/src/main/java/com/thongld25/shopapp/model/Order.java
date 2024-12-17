@@ -22,6 +22,9 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String receiverName;
+    private String receiverPhone;
+    private String address;
     private LocalDateTime orderDate;
     private BigDecimal totalAmount;
 

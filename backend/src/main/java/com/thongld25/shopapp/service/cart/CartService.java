@@ -5,7 +5,6 @@ import com.thongld25.shopapp.dto.CartItemDto;
 import com.thongld25.shopapp.exceptions.ResourceNotFoundException;
 import com.thongld25.shopapp.model.Cart;
 import com.thongld25.shopapp.model.CartItem;
-import com.thongld25.shopapp.model.ProductSize;
 import com.thongld25.shopapp.model.User;
 import com.thongld25.shopapp.repository.CartItemRepository;
 import com.thongld25.shopapp.repository.CartRepository;
@@ -40,6 +39,7 @@ public class CartService implements ICartService{
         Cart cart = getCart(id);
         cartItemRepository.deleteAllByCartId(id);
         cart.getItems().clear();
+        cart.updateTotalAmount();
         cartRepository.deleteById(id);
     }
 

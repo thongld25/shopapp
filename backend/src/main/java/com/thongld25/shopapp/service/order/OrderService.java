@@ -7,10 +7,12 @@ import com.thongld25.shopapp.model.*;
 import com.thongld25.shopapp.repository.OrderRepository;
 import com.thongld25.shopapp.repository.ProductRepository;
 import com.thongld25.shopapp.repository.ProductSizeRepository;
+import com.thongld25.shopapp.request.PlaceOrderRequest;
 import com.thongld25.shopapp.service.cart.CartService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,13 +23,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderService implements IOrderService{
     private final OrderRepository orderRepository;
-    private final ProductRepository productRepository;
     private final ProductSizeRepository productSizeRepository;
     private final CartService cartService;
     private final ModelMapper modelMapper;
 
+    @Transactional
     @Override
-    public Order placeOrder(Long userId) {
+    public Order placeOrder(PlaceOrderRequest request, Long userId) {
         Cart cart = cartService.getCartByUserId(userId);
 
         Order order = createOrder(cart);
@@ -35,6 +37,9 @@ public class OrderService implements IOrderService{
 
         order.setOrderItems(new HashSet<>(orderItems));
         order.setTotalAmount(calculateTotalAmount(orderItems));
+        order.setReceiverName(request.getReceiverName());
+        order.setAddress(request.getAddress());
+        order.setReceiverPhone(request.getReceiverPhone());
         Order savedOrder = orderRepository.save(order);
         cartService.clearCart(cart.getId());
 
@@ -68,7 +73,7 @@ public class OrderService implements IOrderService{
     private List<OrderItem> createOrderItems(Order order, Cart cart) {
         return cart.getItems().stream().map(cartItem -> {
             ProductSize productSize = cartItem.getProductSize();
-//            product.setInventory(product.getInventory() - cartItem.getQuantity());
+            productSize.setInventory(productSize.getInventory() - cartItem.getQuantity());
             productSizeRepository.save(productSize);
             return new OrderItem(
                     order,

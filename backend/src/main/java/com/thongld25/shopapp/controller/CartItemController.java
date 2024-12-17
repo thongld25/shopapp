@@ -34,7 +34,7 @@ public class CartItemController {
             return ResponseEntity.ok(new ApiResponse("Add Item Success", null));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-        } catch (JwtException e){
+        } catch (JwtException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(e.getMessage(), null));
         }
     }
@@ -55,7 +55,7 @@ public class CartItemController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping("/product/{productSizeId}/update")
     public ResponseEntity<ApiResponse> updateItemQuantity(@PathVariable Long productSizeId,
-                                                            @RequestParam Integer quantity) {
+                                                          @RequestParam Integer quantity) {
         try {
             User user = userService.getAuthenticatedUser();
             Cart cart = cartService.initializeNewCart(user);
