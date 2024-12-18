@@ -1,5 +1,7 @@
 import axios from "axios";
 import API_BASE_URL from "./apiConfig";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export const createOrder = async (receiverName, receiverPhone, address) => {
   const token = localStorage.getItem("token");
@@ -11,7 +13,23 @@ export const createOrder = async (receiverName, receiverPhone, address) => {
     });
     return response.data.data;
   } catch (error) {
-    console.error("Error creating order:", error);
+    if (error.response) {
+      const status = error.response.status;
+      if (status === 401) {
+        console.error("Unauthorized: Token không hợp lệ hoặc hết hạn.");
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      } else if (status === 403) {
+        toast.error("Bạn không có quyền truy cập tài nguyên này.");
+      } else if (status >= 500) {
+        toast.error("Lỗi máy chủ. Vui lòng thử lại sau.");
+      }
+    } else if (error.request) {
+      // console.log(error.request);
+      toast.error("Không nhận được phản hồi từ máy chủ.");
+    } else {
+      toast.error("Lỗi khi thiết lập yêu cầu.");
+    }
     throw error;
   }
 };
@@ -24,10 +42,26 @@ export const listOrdersOfUser = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
+    console.log(response);
     return response.data;
   } catch (error) {
-    console.error("Error fetching orders:", error);
+    if (error.response) {
+      const status = error.response.status;
+      if (status === 401) {
+        console.error("Unauthorized: Token không hợp lệ hoặc hết hạn.");
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      } else if (status === 403) {
+        toast.error("Bạn không có quyền truy cập tài nguyên này.");
+      } else if (status >= 500) {
+        toast.error("Lỗi máy chủ. Vui lòng thử lại sau.");
+      }
+    } else if (error.request) {
+      // console.log(error.request);
+      toast.error("Không nhận được phản hồi từ máy chủ.");
+    } else {
+      toast.error("Lỗi khi thiết lập yêu cầu.");
+    }
     throw error;
   }
-}
-
+};

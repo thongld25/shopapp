@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { listOrdersOfUser } from "../services/OrderService";
-import { use } from "react";
 import { toast } from "react-toastify";
 import Title from "../components/Title";
 import { assets } from "../assets/assets";
@@ -66,7 +65,9 @@ const Orders = () => {
                 <p>{order.receiverPhone}</p>
               </div>
               <div>
-                <p className="text-sm sm:text-[15px]">Items : {order.items.length}</p>
+                <p className="text-sm sm:text-[15px]">
+                  Items : {order.items.length}
+                </p>
                 <p className="mt-3">Method : COD</p>
                 <p>Date : {new Date(order.orderDate).toLocaleString()}</p>
               </div>

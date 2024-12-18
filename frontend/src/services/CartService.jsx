@@ -1,5 +1,7 @@
 import axios from "axios";
 import API_BASE_URL from "./apiConfig";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export async function addToCart(id, nb, sz) {
   const token = localStorage.getItem("token");
@@ -18,8 +20,25 @@ export async function addToCart(id, nb, sz) {
     // console.log(response.data);  // Log the successful response
     return response.data; // Return the data for further processing
   } catch (error) {
-    // console.error("Error adding to cart:", error); // More informative error message
-    throw error; // Re-throw the error to be handled higher up in the component
+    if (error.response) {
+      const status = error.response.status;
+      if (status === 401) {
+        toast.error("Vui lòng đăng nhập để thực hiện thao tác này.");
+        console.error("Unauthorized: Token không hợp lệ hoặc hết hạn.");
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      } else if (status === 403) {
+        toast.error("Bạn không có quyền truy cập tài nguyên này.");
+      } else if (status >= 500) {
+        toast.error("Lỗi máy chủ. Vui lòng thử lại sau.");
+      }
+    } else if (error.request) {
+      // console.log(error.request);
+      toast.error("Không nhận được phản hồi từ máy chủ.");
+    } else {
+      toast.error("Lỗi khi thiết lập yêu cầu.");
+    }
+    throw error;
   }
 }
 
@@ -35,8 +54,25 @@ export const getCart = async () => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error fetching cart:", error);
-    throw error; // Re-throw the error to be caught in your component
+    if (error.response) {
+      const status = error.response.status;
+      if (status === 401) {
+        toast.error("Vui lòng đăng nhập để thực hiện thao tác này.");
+        console.error("Unauthorized: Token không hợp lệ hoặc hết hạn.");
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      } else if (status === 403) {
+        toast.error("Bạn không có quyền truy cập tài nguyên này.");
+      } else if (status >= 500) {
+        toast.error("Lỗi máy chủ. Vui lòng thử lại sau.");
+      }
+    } else if (error.request) {
+      // console.log(error.request);
+      toast.error("Không nhận được phản hồi từ máy chủ.");
+    } else {
+      toast.error("Lỗi khi thiết lập yêu cầu.");
+    }
+    throw error;
   }
 };
 
@@ -54,7 +90,24 @@ export const updateItem = async (id, quantity) => {
     );
     return response.data;
   } catch (error) {
-    console.error(error);
+    if (error.response) {
+      const status = error.response.status;
+      if (status === 401) {
+        console.error("Unauthorized: Token không hợp lệ hoặc hết hạn.");
+        localStorage.removeItem("token");
+        toast.error("Vui lòng đăng nhập để thực hiện thao tác này.");
+        window.location.href = "/login";
+      } else if (status === 403) {
+        toast.error("Bạn không có quyền truy cập tài nguyên này.");
+      } else if (status >= 500) {
+        toast.error("Lỗi máy chủ. Vui lòng thử lại sau.");
+      }
+    } else if (error.request) {
+      // console.log(error.request);
+      toast.error("Không nhận được phản hồi từ máy chủ.");
+    } else {
+      toast.error("Lỗi khi thiết lập yêu cầu.");
+    }
     throw error;
   }
 };
@@ -72,7 +125,24 @@ export const clearItem = async (id) => {
     );
     return response.data;
   } catch (error) {
-    console.error(error);
+    if (error.response) {
+      const status = error.response.status;
+      if (status === 401) {
+        console.error("Unauthorized: Token không hợp lệ hoặc hết hạn.");
+        localStorage.removeItem("token");
+        toast.error("Vui lòng đăng nhập để thực hiện thao tác này.");
+        window.location.href = "/login";
+      } else if (status === 403) {
+        toast.error("Bạn không có quyền truy cập tài nguyên này.");
+      } else if (status >= 500) {
+        toast.error("Lỗi máy chủ. Vui lòng thử lại sau.");
+      }
+    } else if (error.request) {
+      // console.log(error.request);
+      toast.error("Không nhận được phản hồi từ máy chủ.");
+    } else {
+      toast.error("Lỗi khi thiết lập yêu cầu.");
+    }
     throw error;
   }
 };
@@ -87,7 +157,24 @@ export const totalCartAmount = async () => {
     });
     return response.data.data;
   } catch (error) {
-    console.error(error);
+    if (error.response) {
+      const status = error.response.status;
+      if (status === 401) {
+        console.error("Unauthorized: Token không hợp lệ hoặc hết hạn.");
+        localStorage.removeItem("token");
+        toast.error("Vui lòng đăng nhập để thực hiện thao tác này.");
+        window.location.href = "/login";
+      } else if (status === 403) {
+        toast.error("Bạn không có quyền truy cập tài nguyên này.");
+      } else if (status >= 500) {
+        toast.error("Lỗi máy chủ. Vui lòng thử lại sau.");
+      }
+    } else if (error.request) {
+      // console.log(error.request);
+      toast.error("Không nhận được phản hồi từ máy chủ.");
+    } else {
+      toast.error("Lỗi khi thiết lập yêu cầu.");
+    }
     throw error;
   }
 };

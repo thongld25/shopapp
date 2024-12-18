@@ -44,7 +44,7 @@ const ShopContextProvider = (props) => {
       .catch(error => {
         console.error("Lỗi khi lấy danh sách sản phẩm:", error);
       });
-    fetchCartData();
+    // fetchCartData();
   }, []); // Chỉ chạy một lần khi component được render
   
 
