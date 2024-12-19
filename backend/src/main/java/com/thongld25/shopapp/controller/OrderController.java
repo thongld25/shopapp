@@ -30,7 +30,7 @@ public class OrderController {
         try {
             User user = userService.getAuthenticatedUser();
             Order order = orderService.placeOrder(request, user.getId());
-            OrderDto orderDto = orderService.convertToDto(order);
+            OrderDto orderDto = orderService.convertOrderToDto(order);
             return ResponseEntity.ok(new ApiResponse("Item Order Success", orderDto));
         } catch (JwtException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("error", e.getMessage()));
